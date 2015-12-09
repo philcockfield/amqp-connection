@@ -1,10 +1,9 @@
 # amqp-connection
+
+[![Build Status](https://travis-ci.org/philcockfield/amqp-connection.svg)]
+
 Cached connections to an AMQP server.
 
-
-## Run
-    npm install
-    npm start
 
 
 ## Tests
