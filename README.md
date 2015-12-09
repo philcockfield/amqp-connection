@@ -1,6 +1,6 @@
-# amqp-connection
+# mq-connection
 
-[![Build Status](https://travis-ci.org/philcockfield/amqp-connection.svg)]
+[![Build Status](https://travis-ci.org/philcockfield/mq-connection.svg)]
 
 Cached connections to an AMQP server.
 
