@@ -6,27 +6,9 @@ import Promise from "bluebird";
 import amqp from "amqplib";
 import connect from "../src/main";
 import { reset, exists } from "../src/main";
+import FakeConnection from "../src/fake-connection";
 
 
-class FakeConnection {
-  constructor() {
-    this._events = {};
-  }
-
-  on(event, handler) {
-    if (R.is(Function, handler)) {
-      this._events[event] = this._events[event] || [];
-      this._events[event].push(handler);
-    }
-  }
-
-  close() {
-    const handlers = this._events.close;
-    if (handlers) {
-      handlers.forEach(fn => fn());
-    }
-  }
-};
 
 
 
