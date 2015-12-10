@@ -1,5 +1,7 @@
 import R from "ramda";
 const EVENTS = Symbol("EVENTS");
+const delay = (msecs, func) => setTimeout(func, msecs);
+
 
 
 /**
@@ -20,7 +22,10 @@ export default class FakeConnection {
   close() {
     const handlers = this[EVENTS].close;
     if (handlers) {
-      handlers.forEach(fn => fn());
+      // Simulate delay in closing.
+      delay(10, () => {
+        handlers.forEach(fn => fn());
+      });
     }
   }
 };
