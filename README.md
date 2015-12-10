@@ -2,7 +2,7 @@
 
 ![Build Status](https://travis-ci.org/philcockfield/mq-connection.svg)
 
-Idempotent connections to an AMQP/RabbitMQ server.
+Cached, idempotent connections to an AMQP/RabbitMQ server.
 
 ---
 RabbitMQ `connections` are expensive to create and destroy.  You want avoid having too many open connections, in contrast to `channels` which you can (and should) have many of over a single open channel ([ref](http://derickbailey.com/2014/03/26/2-lessons-learned-and-3-resources-for-for-learning-rabbitmq-on-nodejs/)).
