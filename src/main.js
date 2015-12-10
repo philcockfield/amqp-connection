@@ -24,6 +24,18 @@ export const exists = (url) => CACHE[url] !== undefined;
 
 
 
+/**
+ * An alternative to the default close method that returns a promise.
+ */
+const close = (url, conn, closeMethod) => {
+  return new Promise((resolve, reject) => {
+    delete CACHE[url]; // Remove from cache.
+    conn.on("close", () => resolve({ url }));
+    closeMethod.call(conn);
+  });
+};
+
+
 
 /**
  * Main entry point to module.
@@ -57,8 +69,9 @@ export default (url, socketOptions = {}) => {
             const conn = yield amqp.connect(url, socketOptions);
             CACHE[url] = conn;
 
-            // Wire up events.
-            conn.on("close", () => delete CACHE[url]);
+            // Swap out the close method to one that returns a promise.
+            const closeMethod = conn.close;
+            conn.close = () => close(url, conn, closeMethod);
 
             // Finish up.
             resolve(conn);
