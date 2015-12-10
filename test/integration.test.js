@@ -33,6 +33,15 @@ describe("Integration tests", function() {
   });
 
 
+  it("fails to connect to a server", (done) => {
+    connection("amqp://fail")
+      .catch(err => {
+        expect(err.code).to.equal("ENOTFOUND");
+        done();
+      });
+  });
+
+
   it("removes connection from cache when closed", (done) => {
     return connection(URL)
       .then(conn => {
