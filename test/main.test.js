@@ -77,7 +77,7 @@ describe("mq-connection", () => {
       return connect(URL)
         .then(conn => {
             expect(exists(URL)).to.equal(true);
-            mock.verify();
+            mock.restore();
             done();
         });
     });
@@ -124,6 +124,7 @@ describe("mq-connection", () => {
 
           expect(conn1).not.to.equal(conn2);
           done();
+
       }).call(this);
     });
   });
@@ -146,7 +147,7 @@ describe("mq-connection", () => {
         conn.close();
         expect(exists(URL)).to.equal(false);
 
-        mock.verify();
+        mock.restore();
         done();
 
       }).call(this);
