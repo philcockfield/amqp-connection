@@ -9,10 +9,11 @@ import { delay } from "../util";
  *
  */
 export default class FakeChannel {
-  assertExchange(exchange, type, options = {}) {
+  assertExchange() {
+    // Parameters: exchange, type, [options]
     // http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange
-    return new Promise((resolve, reject) => {
-      delay(1, () => resolve(true))
+    return new Promise((resolve) => {
+      delay(1, () => resolve(true));
     });
   }
-};
+}

@@ -105,7 +105,7 @@ const connectionFactory = (url, socketOptions = {}) => {
  * @return {Promise} that yeilds an `amqplib` connection.
  */
 const connect = (url, socketOptions) => amqp.connect(url, socketOptions);
-const fakeConnect = () => new Promise((resolve, reject) => resolve(new FakeConnection()));
+const fakeConnect = () => new Promise((resolve) => resolve(new FakeConnection()));
 connectionFactory.connect = connect;
 
 /**

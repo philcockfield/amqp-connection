@@ -34,8 +34,8 @@ export default class FakeConnection {
   }
 
   createChannel() {
-    return new Promise((resolve, reject) => {
-      delay(1, () => resolve(new FakeChannel()))
+    return new Promise((resolve) => {
+      delay(1, () => resolve(new FakeChannel()));
     });
   }
-};
+}
