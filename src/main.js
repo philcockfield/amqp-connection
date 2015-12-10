@@ -28,7 +28,7 @@ export const exists = (url) => CACHE[url] !== undefined;
  * An alternative to the default close method that returns a promise.
  */
 const close = (url, conn, closeMethod) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     delete CACHE[url]; // Remove from cache.
     conn.on("close", () => resolve({ url }));
     closeMethod.call(conn);
