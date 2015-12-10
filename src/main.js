@@ -15,15 +15,24 @@ export const reset = () => {
 
 
 
+/**
+ * Determines whether a connection for the given URL already exists.
+ * @param {String} url: The URL to the AMQP server.
+ * @return {Boolean}
+ */
+export const exists = (url) => CACHE[url] !== undefined;
+
+
+
 
 /**
  * Main entry point to module.
  * Creates or retrieves a cached connection.
  *
- * @param {string} url: The URL to the AMQP/RabbitMQ server.
+ * @param {String} url: The URL to the AMQP/RabbitMQ server.
  *                      Must start with "amqp://"
  *
- * @param {object} socketOptions: Connection options.
+ * @param {Object} socketOptions: Connection options.
  *                                See: http://www.squaremobius.net/amqp.node/channel_api.html#connect
  * @return {Promise}
  */
@@ -37,14 +46,23 @@ export default (url, socketOptions = {}) => {
     Promise.coroutine(function*() {
 
         // Check whether the connection exists.
-        if (CACHE[url]) {
+        if (exists(url)) {
+
+          // Returned the existing connection.
           resolve(CACHE[url]);
+
         } else {
-          // Establish the connection.
           try {
+            // Establish a new connection and store it.
             const conn = yield amqp.connect(url, socketOptions);
             CACHE[url] = conn;
+
+            // Wire up events.
+            conn.on("close", () => delete CACHE[url]);
+
+            // Finish up.
             resolve(conn);
+
           } catch (err) {
             reject(err);
           }

@@ -5,9 +5,29 @@ import sinon from "sinon";
 import Promise from "bluebird";
 import amqp from "amqplib";
 import connection from "../src/main";
-import { reset } from "../src/main";
+import { reset, exists } from "../src/main";
 
-const FAKE_CONNECTION = { isFake: true };
+
+class FakeConnection {
+  constructor() {
+    this._events = {};
+  }
+
+  on(event, handler) {
+    if (R.is(Function, handler)) {
+      this._events[event] = this._events[event] || [];
+      this._events[event].push(handler);
+    }
+  }
+
+  close() {
+    const handlers = this._events.close;
+    if (handlers) {
+      handlers.forEach(fn => fn());
+    }
+  }
+};
+
 
 
 describe("mq-connection", () => {
@@ -37,11 +57,11 @@ describe("mq-connection", () => {
         .expects("connect")
         .once()
         .withArgs(URL, SOCKET_ARGS)
-        .returns(new Promise((resolve, reject) => resolve(FAKE_CONNECTION)));
+        .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
       return connection(URL, SOCKET_ARGS)
         .then(result => {
-            expect(result).to.equal(FAKE_CONNECTION);
+            expect(result).to.be.an.instanceof(FakeConnection);
             mock.verify();
         });
     });
@@ -63,13 +83,31 @@ describe("mq-connection", () => {
     });
 
 
+    it("exists within the cache", (done) => {
+      const URL = "amqp://rabbitmq";
+      expect(exists(URL)).to.equal(false);
+
+      const mock = sinon.mock(amqp);
+      mock
+        .expects("connect")
+        .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
+
+      return connection(URL)
+        .then(conn => {
+            expect(exists(URL)).to.equal(true);
+            mock.verify();
+            done();
+        });
+    });
+
+
     it("re-uses an existing connection", (done) => {
       const URL = "amqp://rabbitmq";
       const mock = sinon.mock(amqp);
       mock
         .expects("connect")
         .once()
-        .returns(new Promise((resolve, reject) => resolve(FAKE_CONNECTION)));
+        .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
       Promise.coroutine(function*() {
           const conn1 = yield connection(URL);
@@ -88,7 +126,7 @@ describe("mq-connection", () => {
           mock
             .expects("connect")
             .once()
-            .returns(new Promise((resolve, reject) => resolve(R.clone(FAKE_CONNECTION))));
+            .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
           const conn1 = yield connection("amqp://rabbitmq");
           mock.verify();
@@ -97,13 +135,38 @@ describe("mq-connection", () => {
           mock
             .expects("connect")
             .once()
-            .returns(new Promise((resolve, reject) => resolve(R.clone(FAKE_CONNECTION))));
+            .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
           const conn2 = yield connection("amqps://rabbitmq");
           mock.verify();
 
           expect(conn1).not.to.equal(conn2);
           done();
+      }).call(this);
+    });
+  });
+
+
+  describe("close", function() {
+    it("removes connection from cache", (done) => {
+      Promise.coroutine(function*() {
+
+        const URL = "amqp://rabbitmq";
+        const mock = sinon.mock(amqp);
+        mock
+          .expects("connect")
+          .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
+
+        expect(exists(URL)).to.equal(false);
+        const conn = yield connection(URL);
+        expect(exists(URL)).to.equal(true);
+
+        conn.close();
+        expect(exists(URL)).to.equal(false);
+
+        mock.verify();
+        done();
+
       }).call(this);
     });
   });
