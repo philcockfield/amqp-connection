@@ -28,6 +28,7 @@ describe("Fakes (test helpers)", function() {
     });
   });
 
+
   describe("Connection", function() {
     it("connection.createChannel() returns a {FakeChannel}", () => {
       Promise.coroutine(function*() {
