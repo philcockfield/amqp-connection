@@ -17,17 +17,17 @@ This module allows you to work with a single cached connection for each URL.  Th
 
 ## Usage
 ```js
-import connection from "mq-connection";
+import connect from "mq-connection";
 
-connection("amqp://rabbitmq")
-.then(conn => {
-  // An `amqplib` connection object is returned.
-})
+connect("amqp://rabbitmq")
+  .then(connection => {
+    // An `amqplib` connection object is returned.
+  });
 
-connection("amqp://rabbitmq")
-.then(conn => {
-  // `conn` is the same cached connection that was returned above.
-})
+connect("amqp://rabbitmq")
+  .then(connection => {
+    // This `connection` is the same (cached) connection that was returned above.
+  });
 
 ```
 
@@ -36,9 +36,9 @@ The `amqp` connection that is returned has a modified `close()` method that retu
 
 ```js
 
-conn.close()
+connection.close()
   .then(result => {
-    // Connection is now closed.
+    // The connection is now closed.
   });
 
 ```

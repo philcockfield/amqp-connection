@@ -4,7 +4,7 @@ import { expect } from "chai";
 import sinon from "sinon";
 import Promise from "bluebird";
 import amqp from "amqplib";
-import connection from "../src/main";
+import connect from "../src/main";
 import { reset, exists } from "../src/main";
 
 
@@ -37,13 +37,13 @@ describe("mq-connection", () => {
 
   describe("initialization errors", function() {
     it("throws if a URL was not specified", () => {
-      expect(() => connection()).to.throw();
-      expect(() => connection(null)).to.throw();
-      expect(() => connection("")).to.throw();
+      expect(() => connect()).to.throw();
+      expect(() => connect(null)).to.throw();
+      expect(() => connect("")).to.throw();
     });
 
     it("throws if the URL does not start with 'amqp://' or 'amqps://'", () => {
-      expect(() => connection("rabbitmq")).to.throw();
+      expect(() => connect("rabbitmq")).to.throw();
     });
   });
 
@@ -59,7 +59,7 @@ describe("mq-connection", () => {
         .withArgs(URL, SOCKET_ARGS)
         .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
-      return connection(URL, SOCKET_ARGS)
+      return connect(URL, SOCKET_ARGS)
         .then(result => {
             expect(result).to.be.an.instanceof(FakeConnection);
             mock.verify();
@@ -74,7 +74,7 @@ describe("mq-connection", () => {
         .once()
         .returns(new Promise((resolve, reject) => reject(new Error("My Error"))));
 
-      return connection("amqp://rabbitmq")
+      return connect("amqp://rabbitmq")
         .catch(err => {
           expect(err.message).to.equal("My Error");
           mock.verify()
@@ -92,7 +92,7 @@ describe("mq-connection", () => {
         .expects("connect")
         .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
-      return connection(URL)
+      return connect(URL)
         .then(conn => {
             expect(exists(URL)).to.equal(true);
             mock.verify();
@@ -110,8 +110,8 @@ describe("mq-connection", () => {
         .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
       Promise.coroutine(function*() {
-          const conn1 = yield connection(URL);
-          const conn2 = yield connection(URL);
+          const conn1 = yield connect(URL);
+          const conn2 = yield connect(URL);
           expect(conn1).to.equal(conn2);
           mock.verify();
           done();
@@ -128,7 +128,7 @@ describe("mq-connection", () => {
             .once()
             .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
-          const conn1 = yield connection("amqp://rabbitmq");
+          const conn1 = yield connect("amqp://rabbitmq");
           mock.verify();
 
           mock = sinon.mock(amqp);
@@ -137,7 +137,7 @@ describe("mq-connection", () => {
             .once()
             .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
-          const conn2 = yield connection("amqps://rabbitmq");
+          const conn2 = yield connect("amqps://rabbitmq");
           mock.verify();
 
           expect(conn1).not.to.equal(conn2);
@@ -158,7 +158,7 @@ describe("mq-connection", () => {
           .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
         expect(exists(URL)).to.equal(false);
-        const conn = yield connection(URL);
+        const conn = yield connect(URL);
         expect(exists(URL)).to.equal(true);
 
         conn.close();
