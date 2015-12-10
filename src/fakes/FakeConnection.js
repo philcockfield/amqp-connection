@@ -1,7 +1,9 @@
 import R from "ramda";
-const EVENTS = Symbol("EVENTS");
-const delay = (msecs, func) => setTimeout(func, msecs);
+import Promise from "bluebird";
+import { delay } from "../util";
+import FakeChannel from "./FakeChannel";
 
+const EVENTS = Symbol("EVENTS");
 
 
 /**
@@ -27,5 +29,11 @@ export default class FakeConnection {
         handlers.forEach(fn => fn());
       });
     }
+  }
+
+  createChannel() {
+    return new Promise((resolve, reject) => {
+      delay(1, () => resolve(new FakeChannel()))
+    });
   }
 };
