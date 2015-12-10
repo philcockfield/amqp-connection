@@ -13,6 +13,7 @@ describe("Integration tests", function() {
   this.timeout(5 * 1000);
   beforeEach(() => {
     reset();
+    connect.real(); // Ensure {FakeConnection} is not being used.
   });
 
 

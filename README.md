@@ -35,15 +35,38 @@ The `amqp` connection that is returned has a modified `close()` method that retu
 
 
 ```js
-
 connection.close()
   .then(result => {
     // The connection is now closed.
   });
-
 ```
 
 Once closed the connection is removed from the cache.
+
+
+## Fakes
+You can easily return fake connections for the purposes of testing using the `fake()` method:
+
+```js
+import connect from "mq-connection";
+connect.fake();
+
+connect("amqp://whatever")
+  .then(connection => {
+    // This is a {FakeConnection}.
+  });
+
+```
+
+To restore the module to make real connections use the 'real()' method:
+
+```js
+import connect from "mq-connection";
+connect.fake(); // Makes fake connections.
+...
+connect.real(); // Back to making real connections now.
+```
+
 
 
 ## Tests

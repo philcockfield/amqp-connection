@@ -1,6 +1,7 @@
 import R from "ramda";
 import Promise from "bluebird";
 import amqp from "amqplib";
+import FakeConnection from "./fakes/FakeConnection";
 
 const CACHE = {};
 const isValidUrl = (url) => new RegExp("^(amqp|amqps)://", "i").test(url);
@@ -51,7 +52,7 @@ const isPromise = (value) => R.is(Function, value.then);
  *                                See: http://www.squaremobius.net/amqp.node/channel_api.html#connect
  * @return {Promise}
  */
-export default (url, socketOptions = {}) => {
+const connectionFactory = (url, socketOptions = {}) => {
   // Ensure the URL is adequate.
   if (R.isNil(url) || R.isEmpty(url)) { throw new Error("A url to the AMQP server is required, eg amqp://rabbitmq"); }
   url = url.trim();
@@ -77,20 +78,48 @@ export default (url, socketOptions = {}) => {
           // Establish a new connection and store it.
           // NOTE: The promise is stored in the cache in case another request
           //       comes in for the same URL prior to the connection opening.
-          CACHE[url] = amqp.connect(url, socketOptions)
+          CACHE[url] = connectionFactory.connect(url, socketOptions)
               .then(conn => {
-                  // Store the actual connection in the cache.
-                  CACHE[url] = conn;
+                    // Store the actual connection in the cache.
+                    CACHE[url] = conn;
 
-                  // Swap out the close method to one that returns a promise.
-                  const closeMethod = conn.close;
-                  conn.close = () => close(url, conn, closeMethod);
+                    // Swap out the close method to one that returns a promise.
+                    const closeMethod = conn.close;
+                    conn.close = () => close(url, conn, closeMethod);
 
-                  // Finish up.
-                  resolve(conn);
-                  return conn;
+                    // Finish up.
+                    resolve(conn);
+                    return conn;
                 })
               .catch(err => reject(err));
         }
   });
 };
+
+
+
+/**
+ * TESTING: The low-level connection method.
+ *          Swap this out to return a fake connection for testing.
+ *
+ * @return {Promise} that yeilds an `amqplib` connection.
+ */
+const connect = (url, socketOptions) => amqp.connect(url, socketOptions);
+const fakeConnect = () => new Promise((resolve, reject) => resolve(new FakeConnection()));
+connectionFactory.connect = connect;
+
+/**
+ * TESTING: Setup the module to return fake connections.
+ */
+connectionFactory.fake = () => connectionFactory.connect = fakeConnect;
+
+/**
+ * TESTING: Restore the module to return real AMQPLib connections.
+ */
+connectionFactory.real = () => connectionFactory.connect = connect;
+
+
+
+// ----------------------------------------------------------------------------
+
+export default connectionFactory;

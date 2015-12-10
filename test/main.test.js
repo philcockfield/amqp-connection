@@ -6,7 +6,7 @@ import Promise from "bluebird";
 import amqp from "amqplib";
 import connect from "../src/main";
 import { reset, exists } from "../src/main";
-import FakeConnection from "../src/FakeConnection";
+import FakeConnection from "../src/fakes/FakeConnection";
 
 
 
