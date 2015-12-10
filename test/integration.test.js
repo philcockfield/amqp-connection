@@ -1,5 +1,6 @@
 "use strict";
 import R from "ramda";
+import Promise from "bluebird";
 import { expect } from "chai";
 import amqp from "amqplib";
 import connection from "../src/main";
@@ -19,6 +20,15 @@ describe("Integration tests", function() {
     return connection(URL)
       .then(conn => {
         expect(R.is(Function, conn.createChannel)).to.equal(true);
+      });
+  });
+
+
+  it("re-uses an existing connection", (done) => {
+    Promise.all([connection(URL), connection(URL)])
+      .then(connections => {
+          expect(connections[0]).to.equal(connections[1]);
+          done();
       });
   });
 
