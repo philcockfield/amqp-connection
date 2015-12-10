@@ -1,12 +1,19 @@
 "use strict";
+import R from "ramda";
 import { expect } from "chai";
 import sinon from "sinon";
+import Promise from "bluebird";
 import amqp from "amqplib";
 import connection from "../src/main";
+import { reset } from "../src/main";
 
+const FAKE_CONNECTION = { isFake: true };
 
 
 describe("mq-connection", () => {
+  beforeEach(() => {
+    reset();
+  });
 
   describe("initialization errors", function() {
     it("throws if a URL was not specified", () => {
@@ -25,18 +32,16 @@ describe("mq-connection", () => {
     it("connects to the AMQP server", () => {
       const URL = "amqp://rabbitmq";
       const SOCKET_ARGS = {};
-      const fakeConnection = { isFake: true };
       const mock = sinon.mock(amqp);
-
       mock
         .expects("connect")
         .once()
         .withArgs(URL, SOCKET_ARGS)
-        .returns(new Promise((resolve, reject) => resolve(fakeConnection)));
+        .returns(new Promise((resolve, reject) => resolve(FAKE_CONNECTION)));
 
       return connection(URL, SOCKET_ARGS)
         .then(result => {
-            expect(result).to.equal(fakeConnection);
+            expect(result).to.equal(FAKE_CONNECTION);
             mock.verify();
         });
     });
@@ -46,6 +51,7 @@ describe("mq-connection", () => {
       const mock = sinon.mock(amqp);
       mock
         .expects("connect")
+        .once()
         .returns(new Promise((resolve, reject) => reject(new Error("My Error"))));
 
       return connection("amqp://rabbitmq")
@@ -54,6 +60,51 @@ describe("mq-connection", () => {
           mock.verify()
           done();
         });
+    });
+
+
+    it("re-uses an existing connection", (done) => {
+      const URL = "amqp://rabbitmq";
+      const mock = sinon.mock(amqp);
+      mock
+        .expects("connect")
+        .once()
+        .returns(new Promise((resolve, reject) => resolve(FAKE_CONNECTION)));
+
+      Promise.coroutine(function*() {
+          const conn1 = yield connection(URL);
+          const conn2 = yield connection(URL);
+          expect(conn1).to.equal(conn2);
+          mock.verify();
+          done();
+      }).call(this);
+    });
+
+
+    it("returns different connections for distinct URLs", (done) => {
+      Promise.coroutine(function*() {
+          let mock;
+          mock = sinon.mock(amqp);
+          mock
+            .expects("connect")
+            .once()
+            .returns(new Promise((resolve, reject) => resolve(R.clone(FAKE_CONNECTION))));
+
+          const conn1 = yield connection("amqp://rabbitmq");
+          mock.verify();
+
+          mock = sinon.mock(amqp);
+          mock
+            .expects("connect")
+            .once()
+            .returns(new Promise((resolve, reject) => resolve(R.clone(FAKE_CONNECTION))));
+
+          const conn2 = yield connection("amqps://rabbitmq");
+          mock.verify();
+
+          expect(conn1).not.to.equal(conn2);
+          done();
+      }).call(this);
     });
   });
 });
