@@ -7,7 +7,7 @@ import FakeConnection from "../src/fakes/FakeConnection";
 import FakeChannel from "../src/fakes/FakeChannel";
 
 
-describe.only("Fakes (test helpers)", function() {
+describe("Fakes (test helpers)", function() {
   afterEach(() => {
     connect.real();
   });
@@ -28,12 +28,34 @@ describe.only("Fakes (test helpers)", function() {
     });
   });
 
-  it("createChannel returns a {FakeChannel}", () => {
-    Promise.coroutine(function*() {
-      connect.fake();
-      const conn = yield connect("amqp://rabbitmq");
-      const channel = yield conn.createChannel();
-      expect(channel).to.be.an.instanceof(FakeChannel);
-    }).call(this);
+  describe("Connection", function() {
+    it("connection.createChannel() returns a {FakeChannel}", () => {
+      Promise.coroutine(function*() {
+        connect.fake();
+        const conn = yield connect("amqp://rabbitmq");
+        const channel = yield conn.createChannel();
+        expect(channel).to.be.an.instanceof(FakeChannel);
+      }).call(this);
+    });
   });
+
+
+  describe("FakeChannel", function() {
+    let channel;
+    beforeEach(done => {
+      Promise.coroutine(function*() {
+        connect.fake();
+        const conn = yield connect("amqp://rabbitmq");
+        channel = yield conn.createChannel();
+        done();
+      }).call(this);
+    });
+
+
+    it("assertExchange", () => {
+      const result = channel.assertExchange("exchange-name", "fanout", { durable: false });
+      expect(result.then).to.be.an.instanceof(Function);
+    });
+  });
+
 });

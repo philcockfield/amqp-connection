@@ -67,6 +67,8 @@ connect.fake(); // Makes fake connections.
 connect.real(); // Back to making real connections now.
 ```
 
+The fake API's are being fleshed out as needed.  If a method that you need is not there feel free to add it and submit a pull-request.
+
 
 
 ## Tests

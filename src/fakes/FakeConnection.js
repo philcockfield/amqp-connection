@@ -8,6 +8,8 @@ const EVENTS = Symbol("EVENTS");
 
 /**
  * A fake connection used for testing.
+ *
+ * See: http://www.squaremobius.net/amqp.node/channel_api.html#connect
  */
 export default class FakeConnection {
   constructor() {
