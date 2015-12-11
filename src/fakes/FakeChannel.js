@@ -11,8 +11,9 @@ import { delay } from "../util";
 export default class FakeChannel {
   constructor() {
     this.test = {
-      publish: [],
-      assertExchange: []
+      assertExchange: [],
+      assertQueue: [],
+      publish: []
     };
   }
 
@@ -21,6 +22,19 @@ export default class FakeChannel {
     this.test.assertExchange.push({ exchange, type, options });
     return new Promise((resolve) => {
       delay(1, () => resolve(true));
+    });
+  }
+
+
+  assertQueue(queue, options) {
+    // http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue
+    this.test.assertQueue.push({ queue, options });
+    return new Promise((resolve) => {
+      resolve({
+        queue : queue || "amq.auto-generated",
+        messageCount: 0,
+        consumerCount: 0
+      });
     });
   }
 

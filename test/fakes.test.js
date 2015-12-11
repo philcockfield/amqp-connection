@@ -51,27 +51,46 @@ describe("Fakes (test helpers)", function() {
     let channel;
     beforeEach(done => {
       Promise.coroutine(function*() {
-        connect.fake();
-        const conn = yield connect("amqp://rabbitmq");
-        channel = yield conn.createChannel();
-        done();
+          connect.fake();
+          const conn = yield connect("amqp://rabbitmq");
+          channel = yield conn.createChannel();
+          done();
       }).call(this);
     });
 
 
-    it("assertExchange", () => {
+    it(".assertExchange()", () => {
       const options = { durable: false };
-      const result = channel.assertExchange("exchange-name", "fanout", options);
-      expect(result.then).to.be.an.instanceof(Function);
+      const asserting = channel.assertExchange("exchange-name", "fanout", options);
+      expect(asserting.then).to.be.an.instanceof(Function);
 
       const args = channel.test.assertExchange[0];
       expect(args.exchange).to.equal("exchange-name");
       expect(args.type).to.equal("fanout");
       expect(args.options).to.equal(options);
+
+      return asserting.then(result => {
+          expect(result).to.equal(true);
+      });
     });
 
 
-    it("publishes to channel", () => {
+    it(".assertQueue()", () => {
+      const options = { durable: false };
+      const asserting = channel.assertQueue("queue-name", options);
+      expect(asserting.then).to.be.an.instanceof(Function);
+
+      const args = channel.test.assertQueue[0];
+      expect(args.queue).to.equal("queue-name");
+      expect(args.options).to.equal(options);
+
+      return asserting.then(result => {
+          expect(result.queue).to.equal("queue-name");
+      });
+    });
+
+
+    it(".publish()", () => {
       const data = new Buffer(123);
       const options = {};
 
@@ -84,5 +103,9 @@ describe("Fakes (test helpers)", function() {
       expect(args.content).to.equal(data);
       expect(args.options).to.equal(options);
     });
+
+
+
+
   });
 });
