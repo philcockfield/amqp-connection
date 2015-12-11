@@ -107,6 +107,23 @@ describe("Fakes (test helpers)", function() {
     });
 
 
+    it(".consume()", () => {
+      const options = {};
+      const fn = (msg) => true;
+      const consuming = channel.consume("queue-name", fn, options);
+      expect(consuming.then).to.be.an.instanceof(Function);
+
+      const params = channel.test.consume[0];
+      expect(params.queue).to.equal("queue-name");
+      expect(params.func).to.equal(fn);
+      expect(params.options).to.equal(options);
+
+      return consuming.then(result => {
+          expect(result).to.eql({ consumerTag: "tag" });
+      });
+    });
+
+
     it(".publish()", () => {
       const data = new Buffer(123);
       const options = {};

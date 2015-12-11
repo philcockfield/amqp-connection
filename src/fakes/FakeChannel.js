@@ -14,6 +14,7 @@ export default class FakeChannel {
       assertExchange: [],
       assertQueue: [],
       bindQueue: [],
+      consume: [],
       publish: []
     };
   }
@@ -45,6 +46,15 @@ export default class FakeChannel {
     this.test.bindQueue.push({ queue, source, pattern, args });
     return new Promise((resolve, reject) => {
       delay(1, () => resolve({}));
+    });
+  }
+
+
+  consume(queue, func, options) {
+    // http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume
+    this.test.consume.push({ queue, func, options });
+    return new Promise((resolve, reject) => {
+      delay(1, () => resolve({ consumerTag: "tag" }));
     });
   }
 
