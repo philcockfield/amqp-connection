@@ -19,6 +19,10 @@ describe("Fakes (test helpers)", function() {
     })
   });
 
+  it("fake() method returns an instance of the {FakeConnection}", () => {
+    expect(connect.fake()).to.be.an.instanceof(FakeConnection);
+  });
+
   it("real() method reverts to a real connection [integration]", () => {
     connect.fake();
     connect.real();

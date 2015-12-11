@@ -4,6 +4,7 @@ import amqp from "amqplib";
 import FakeConnection from "./fakes/FakeConnection";
 
 const CACHE = {};
+const FAKE_CONNECTION = new FakeConnection();
 const isValidUrl = (url) => new RegExp("^(amqp|amqps)://", "i").test(url);
 
 
@@ -108,13 +109,16 @@ connectionFactory.exists = (url) => CACHE[url] !== undefined;
  * @return {Promise} that yeilds an `amqplib` connection.
  */
 const connect = (url, socketOptions) => amqp.connect(url, socketOptions);
-const fakeConnect = () => new Promise((resolve) => resolve(new FakeConnection()));
+const fakeConnect = () => new Promise((resolve) => resolve(FAKE_CONNECTION));
 connectionFactory.connect = connect;
 
 /**
  * TESTING: Setup the module to return fake connections.
  */
-connectionFactory.fake = () => connectionFactory.connect = fakeConnect;
+connectionFactory.fake = () => {
+    connectionFactory.connect = fakeConnect;
+    return FAKE_CONNECTION;
+  };
 
 /**
  * TESTING: Restore the module to return real AMQPLib connections.
