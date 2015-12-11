@@ -13,6 +13,7 @@ export default class FakeChannel {
     this.test = {
       assertExchange: [],
       assertQueue: [],
+      bindQueue: [],
       publish: []
     };
   }
@@ -35,6 +36,15 @@ export default class FakeChannel {
         messageCount: 0,
         consumerCount: 0
       });
+    });
+  }
+
+
+  bindQueue(queue, source, pattern, args) {
+    // http://www.squaremobius.net/amqp.node/channel_api.html#channel_bindQueue
+    this.test.bindQueue.push({ queue, source, pattern, args });
+    return new Promise((resolve, reject) => {
+      delay(1, () => resolve({}));
     });
   }
 

@@ -64,10 +64,10 @@ describe("Fakes (test helpers)", function() {
       const asserting = channel.assertExchange("exchange-name", "fanout", options);
       expect(asserting.then).to.be.an.instanceof(Function);
 
-      const args = channel.test.assertExchange[0];
-      expect(args.exchange).to.equal("exchange-name");
-      expect(args.type).to.equal("fanout");
-      expect(args.options).to.equal(options);
+      const params = channel.test.assertExchange[0];
+      expect(params.exchange).to.equal("exchange-name");
+      expect(params.type).to.equal("fanout");
+      expect(params.options).to.equal(options);
 
       return asserting.then(result => {
           expect(result).to.equal(true);
@@ -80,12 +80,29 @@ describe("Fakes (test helpers)", function() {
       const asserting = channel.assertQueue("queue-name", options);
       expect(asserting.then).to.be.an.instanceof(Function);
 
-      const args = channel.test.assertQueue[0];
-      expect(args.queue).to.equal("queue-name");
-      expect(args.options).to.equal(options);
+      const params = channel.test.assertQueue[0];
+      expect(params.queue).to.equal("queue-name");
+      expect(params.options).to.equal(options);
 
       return asserting.then(result => {
           expect(result.queue).to.equal("queue-name");
+      });
+    });
+
+
+    it(".bindQueue()", () => {
+      const args = {};
+      const binding = channel.bindQueue("queue-name", "source", "pattern", args);
+      expect(binding.then).to.be.an.instanceof(Function);
+
+      const params = channel.test.bindQueue[0];
+      expect(params.queue).to.equal("queue-name");
+      expect(params.source).to.equal("source");
+      expect(params.pattern).to.equal("pattern");
+      expect(params.args).to.equal(args);
+
+      return binding.then(result => {
+          expect(result).to.eql({});
       });
     });
 
@@ -97,11 +114,11 @@ describe("Fakes (test helpers)", function() {
       const result = channel.publish("exchange-name", "routing-key", data, options);
       expect(result).to.equal(true);
 
-      const args = channel.test.publish[0];
-      expect(args.exchange).to.equal("exchange-name");
-      expect(args.routingKey).to.equal("routing-key");
-      expect(args.content).to.equal(data);
-      expect(args.options).to.equal(options);
+      const params = channel.test.publish[0];
+      expect(params.exchange).to.equal("exchange-name");
+      expect(params.routingKey).to.equal("routing-key");
+      expect(params.content).to.equal(data);
+      expect(params.options).to.equal(options);
     });
 
 
