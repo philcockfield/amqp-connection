@@ -7,22 +7,6 @@ const CACHE = {};
 const isValidUrl = (url) => new RegExp("^(amqp|amqps)://", "i").test(url);
 
 
-/**
- * Clears the cache and resets all state.
- */
-export const reset = () => {
-  Object.keys(CACHE).forEach(key => delete CACHE[key]);
-};
-
-
-
-/**
- * Determines whether a connection for the given URL already exists.
- * @param {String} url: The URL to the AMQP server.
- * @return {Boolean}
- */
-export const exists = (url) => CACHE[url] !== undefined;
-
 
 
 /**
@@ -61,7 +45,7 @@ const connectionFactory = (url, socketOptions = {}) => {
   return new Promise((resolve, reject) => {
 
         // Check whether the connection already exists.
-        if (exists(url)) {
+        if (connectionFactory.exists(url)) {
 
           if (isPromise(CACHE[url])) {
             // A connection for the requested URL is currently in the process
@@ -95,6 +79,25 @@ const connectionFactory = (url, socketOptions = {}) => {
         }
   });
 };
+
+
+
+/**
+ * Clears the cache and resets all state.
+ */
+connectionFactory.reset = () => {
+  Object.keys(CACHE).forEach(key => delete CACHE[key]);
+};
+
+
+
+/**
+ * Determines whether a connection for the given URL already exists.
+ * @param {String} url: The URL to the AMQP server.
+ * @return {Boolean}
+ */
+connectionFactory.exists = (url) => CACHE[url] !== undefined;
+
 
 
 

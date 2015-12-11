@@ -5,7 +5,6 @@ import sinon from "sinon";
 import Promise from "bluebird";
 import amqp from "amqplib";
 import connect from "../src/main";
-import { reset, exists } from "../src/main";
 import FakeConnection from "../src/fakes/FakeConnection";
 
 
@@ -14,7 +13,7 @@ import FakeConnection from "../src/fakes/FakeConnection";
 
 describe("mq-connection", () => {
   beforeEach(() => {
-    reset();
+    connect.reset();
   });
 
   describe("initialization errors", function() {
@@ -67,7 +66,7 @@ describe("mq-connection", () => {
 
     it("exists within the cache", (done) => {
       const URL = "amqp://rabbitmq";
-      expect(exists(URL)).to.equal(false);
+      expect(connect.exists(URL)).to.equal(false);
 
       const mock = sinon.mock(amqp);
       mock
@@ -76,7 +75,7 @@ describe("mq-connection", () => {
 
       return connect(URL)
         .then(conn => {
-            expect(exists(URL)).to.equal(true);
+            expect(connect.exists(URL)).to.equal(true);
             mock.restore();
             done();
         });
@@ -140,12 +139,12 @@ describe("mq-connection", () => {
           .expects("connect")
           .returns(new Promise((resolve, reject) => resolve(new FakeConnection())));
 
-        expect(exists(URL)).to.equal(false);
+        expect(connect.exists(URL)).to.equal(false);
         const conn = yield connect(URL);
-        expect(exists(URL)).to.equal(true);
+        expect(connect.exists(URL)).to.equal(true);
 
         conn.close();
-        expect(exists(URL)).to.equal(false);
+        expect(connect.exists(URL)).to.equal(false);
 
         mock.restore();
         done();

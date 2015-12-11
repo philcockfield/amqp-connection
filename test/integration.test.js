@@ -4,7 +4,6 @@ import Promise from "bluebird";
 import { expect } from "chai";
 import amqp from "amqplib";
 import connect from "../src/main";
-import { reset, exists } from "../src/main";
 
 const URL = "amqp://guest:guest@dev.rabbitmq.com";
 
@@ -12,7 +11,7 @@ const URL = "amqp://guest:guest@dev.rabbitmq.com";
 describe("Integration tests", function() {
   this.timeout(5 * 1000);
   beforeEach(() => {
-    reset();
+    connect.reset();
     connect.real(); // Ensure {FakeConnection} is not being used.
   });
 
@@ -46,11 +45,11 @@ describe("Integration tests", function() {
   it("removes connection from cache when closed", (done) => {
     return connect(URL)
       .then(conn => {
-          expect(exists(URL)).to.equal(true);
+          expect(connect.exists(URL)).to.equal(true);
           conn.close()
             .then(result => {
                 expect(result.url).to.equal(URL);
-                expect(exists(URL)).to.equal(false);
+                expect(connect.exists(URL)).to.equal(false);
                 done();
             });
       });
