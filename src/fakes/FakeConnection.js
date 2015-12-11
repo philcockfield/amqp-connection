@@ -14,6 +14,11 @@ const EVENTS = Symbol("EVENTS");
 export default class FakeConnection {
   constructor() {
     this[EVENTS] = {};
+
+    // Store test values for inspection by unit-tests.
+    this.test = {
+      channels: []
+    };
   }
 
   on(event, handler) {
@@ -35,7 +40,11 @@ export default class FakeConnection {
 
   createChannel() {
     return new Promise((resolve) => {
-      delay(1, () => resolve(new FakeChannel()));
+      delay(1, () => {
+          const channel = new FakeChannel();
+          this.test.channels.push(channel);
+          resolve(channel);
+      });
     });
   }
 }

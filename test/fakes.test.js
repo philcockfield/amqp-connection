@@ -41,6 +41,7 @@ describe("Fakes (test helpers)", function() {
         const conn = yield connect("amqp://rabbitmq");
         const channel = yield conn.createChannel();
         expect(channel).to.be.an.instanceof(FakeChannel);
+        expect(conn.test.channels).to.contain(channel);
       }).call(this);
     });
   });
