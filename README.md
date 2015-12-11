@@ -9,6 +9,10 @@ RabbitMQ `connections` are expensive to create and destroy.  You want avoid havi
 
 This module allows you to work with a single cached connection for each URL.  This is useful when you are employing different modules that connect to RabbitMQ, and don't wish to explicitly pass connections around between API's.
 
+See also:
+- [mq-pubsub](https://github.com/philcockfield/mq-pubsub)
+- [mq-pushworker](https://github.com/philcockfield/mq-pushworker)
+
 
 ## Installation
 
