@@ -39,12 +39,10 @@ export default class FakeConnection {
   }
 
   createChannel() {
+    const channel = new FakeChannel();
+    this.test.channels.push(channel);
     return new Promise((resolve) => {
-      delay(1, () => {
-          const channel = new FakeChannel();
-          this.test.channels.push(channel);
-          resolve(channel);
-      });
+      delay(1, () => resolve(channel));
     });
   }
 }

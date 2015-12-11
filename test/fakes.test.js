@@ -60,9 +60,29 @@ describe("Fakes (test helpers)", function() {
 
 
     it("assertExchange", () => {
-      const result = channel.assertExchange("exchange-name", "fanout", { durable: false });
+      const options = { durable: false };
+      const result = channel.assertExchange("exchange-name", "fanout", options);
       expect(result.then).to.be.an.instanceof(Function);
+
+      const args = channel.test.assertExchange[0];
+      expect(args.exchange).to.equal("exchange-name");
+      expect(args.type).to.equal("fanout");
+      expect(args.options).to.equal(options);
+    });
+
+
+    it("publishes to channel", () => {
+      const data = new Buffer(123);
+      const options = {};
+
+      const result = channel.publish("exchange-name", "routing-key", data, options);
+      expect(result).to.equal(true);
+
+      const args = channel.test.publish[0];
+      expect(args.exchange).to.equal("exchange-name");
+      expect(args.routingKey).to.equal("routing-key");
+      expect(args.content).to.equal(data);
+      expect(args.options).to.equal(options);
     });
   });
-
 });
