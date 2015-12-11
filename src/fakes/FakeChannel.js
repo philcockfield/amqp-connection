@@ -33,7 +33,7 @@ export default class FakeChannel {
     this.test.assertQueue.push({ queue, options });
     return new Promise((resolve) => {
       resolve({
-        queue : queue || "amq.auto-generated",
+        queue: queue || "amq.auto-generated",
         messageCount: 0,
         consumerCount: 0
       });
@@ -44,7 +44,7 @@ export default class FakeChannel {
   bindQueue(queue, source, pattern, args) {
     // http://www.squaremobius.net/amqp.node/channel_api.html#channel_bindQueue
     this.test.bindQueue.push({ queue, source, pattern, args });
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       delay(1, () => resolve({}));
     });
   }
@@ -53,7 +53,7 @@ export default class FakeChannel {
   consume(queue, func, options) {
     // http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume
     this.test.consume.push({ queue, func, options });
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       delay(1, () => resolve({ consumerTag: "tag" }));
     });
   }
