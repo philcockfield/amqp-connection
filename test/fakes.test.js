@@ -8,6 +8,7 @@ import FakeChannel from "../src/fakes/FakeChannel";
 
 
 describe("Fakes (test helpers)", function() {
+  this.timeout(5 * 1000);
   afterEach(() => {
     connect.real();
   });
