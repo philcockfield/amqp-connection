@@ -4,8 +4,7 @@
   "description": "Cached connections to an AMQP server.",
   "main": "./lib/main.js",
   "scripts": {
-    "start": "node .",
-    "watch": "nodemon . -e js,jsx --ignore .build",
+    "example": "node ./example",
     "test": "./node_modules/mocha/bin/mocha --recursive --compilers js:babel/register",
     "tdd": "./node_modules/mocha/bin/mocha --recursive --compilers js:babel/register --watch",
     "prepublish": "gulp lint && gulp build"
