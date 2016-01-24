@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.0] - 2016-01-25
 #### Changed
-- Referencing [Babel](https://babeljs.io/) dependencies via `js-babel` and `js-babel-dev` modules.
+- Referencing [Babel](https://babeljs.io/) version 6 dependencies via `js-babel` and `js-babel-dev` modules.
 - Linting updated to use [AirBnB style guide](https://github.com/airbnb/javascript).
 
 
