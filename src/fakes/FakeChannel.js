@@ -1,5 +1,5 @@
-import Promise from "bluebird";
-import { delay } from "../util";
+import Promise from 'bluebird';
+import { delay } from '../util';
 
 
 /**
@@ -15,7 +15,7 @@ export default class FakeChannel {
       assertQueue: [],
       bindQueue: [],
       consume: [],
-      publish: []
+      publish: [],
     };
   }
 
@@ -33,9 +33,9 @@ export default class FakeChannel {
     this.test.assertQueue.push({ queue, options });
     return new Promise((resolve) => {
       resolve({
-        queue: queue || "amq.auto-generated",
+        queue: queue || 'amq.auto-generated',
         messageCount: 0,
-        consumerCount: 0
+        consumerCount: 0,
       });
     });
   }
@@ -54,7 +54,7 @@ export default class FakeChannel {
     // http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume
     this.test.consume.push({ queue, func, options });
     return new Promise((resolve) => {
-      delay(1, () => resolve({ consumerTag: "tag" }));
+      delay(1, () => resolve({ consumerTag: 'tag' }));
     });
   }
 
