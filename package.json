@@ -1,6 +1,6 @@
 {
   "name": "mq-connection",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Cached connections to an AMQP server.",
   "main": "./lib/main.js",
   "scripts": {
