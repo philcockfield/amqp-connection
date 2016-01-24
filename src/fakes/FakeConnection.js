@@ -1,9 +1,9 @@
-import R from "ramda";
-import Promise from "bluebird";
-import { delay } from "../util";
-import FakeChannel from "./FakeChannel";
+import R from 'ramda';
+import Promise from 'bluebird';
+import { delay } from '../util';
+import FakeChannel from './FakeChannel';
 
-const EVENTS = Symbol("EVENTS");
+const EVENTS = Symbol('EVENTS');
 
 
 /**
@@ -17,7 +17,7 @@ export default class FakeConnection {
 
     // Store test values for inspection by unit-tests.
     this.test = {
-      channels: []
+      channels: [],
     };
   }
 

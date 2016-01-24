@@ -1,4 +1,4 @@
 export default {
-  FakeConnection: require("./FakeConnection"),
-  FakeChannel: require("./FakeChannel")
+  FakeConnection: require('./FakeConnection'),
+  FakeChannel: require('./FakeChannel'),
 };
