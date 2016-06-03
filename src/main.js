@@ -117,7 +117,7 @@ connectionFactory.fake = () => {
 /**
  * TESTING: Restore the module to return real AMQPLib connections.
  */
-connectionFactory.real = () => connectionFactory.connect = connect;
+connectionFactory.real = () => { connectionFactory.connect = connect; };
 
 
 
