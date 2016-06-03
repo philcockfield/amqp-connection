@@ -24,7 +24,7 @@ describe("Fakes (test helpers)", function() {
     expect(connect.fake()).to.be.an.instanceof(FakeConnection);
   });
 
-  it("real() method reverts to a real connection [integration]", () => {
+  it.skip("real() method reverts to a real connection [integration]", () => {
     connect.fake();
     connect.real();
     return connect("amqp://guest:guest@dev.rabbitmq.com").then(conn => {

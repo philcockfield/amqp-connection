@@ -13,6 +13,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [1.1.3] - 2016-06-03
+#### Changed
+- Updated NPM references.
+#### Removed
+- Temporarily removed integration tests (failing because they relied on a live external server, which was dodgy at best).
+
+
+
 ## [1.1.0] - 2016-01-25
 #### Changed
 - Referencing [Babel](https://babeljs.io/) version 6 dependencies via `js-babel` and `js-babel-dev` modules.

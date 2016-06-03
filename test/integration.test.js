@@ -8,7 +8,7 @@ import connect from "../src/main";
 const URL = "amqp://guest:guest@dev.rabbitmq.com";
 
 
-describe("Integration tests", function() {
+describe.skip("Integration tests", function() {
   this.timeout(5 * 1000);
   beforeEach(() => {
     connect.reset();
